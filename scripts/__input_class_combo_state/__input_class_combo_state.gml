@@ -224,7 +224,7 @@ function __input_class_combo_state(_name, _combo_def) constructor
             var _verb = _all_verb_array[_i];
                 
             var _state = _player_verb_struct[$ _verb];
-            if (not _state.__inactive)
+            if (not _state.__inactive && not array_contains(__combo.__ignore_verb_array, _verb))
             {
                 if (variable_struct_exists(__allow_hold_dict, _verb))
                 {

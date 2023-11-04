@@ -7,6 +7,7 @@ function __input_class_combo_definition(_name, _phase_timeout, _directional) con
     __directional   = _directional;
     
     __phase_array = [];
+	__ignore_verb_array = [];
     
     static press = function(_verb)
     {
@@ -58,4 +59,40 @@ function __input_class_combo_definition(_name, _phase_timeout, _directional) con
         
         return self;
     }
+	
+	static ignore_add = function(_verb) {
+	    if (is_array(_verb))
+	    {
+			__ignore_verb_array = array_concat(__ignore_verb_array, _verb);
+	    } else {
+			array_push(__ignore_verb_array, _verb);
+		}
+	}
+	
+	
+	static ignore_remove = function(_verb) {
+	    if (is_array(_verb))
+	    {
+			var _i = 0;
+			repeat(array_length(_verb))
+	        {
+				var _index = array_get_index(__ignore_verb_array, _verb);
+				if(_index > -1)
+				{
+					array_delete(__ignore_verb_array, _index, 1);
+				} 
+				else 
+				{
+					_i++;
+				}
+	        }
+	    } else {
+			var _index = array_get_index(__ignore_verb_array, _verb);
+			if(_index > -1)
+			{
+				array_delete(__ignore_verb_array, _index, 1);
+			} 
+		}
+	}
+	
 }
