@@ -41,7 +41,7 @@ function input_combo_create(_name, _phase_timeout = INPUT_COMBO_DEFAULT_PHASE_TI
         with(_global.__players[_p])
         {
             __add_combo_state(_name, _combo_definition);
-            __add_complex_verb(_name, __INPUT_VERB_TYPE.__CHORD);
+            __add_complex_verb(_name, __INPUT_VERB_TYPE.__COMBO);
         }
         
         ++_p;

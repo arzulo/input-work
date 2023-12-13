@@ -20,7 +20,7 @@ function __input_class_combo_state(_name, _combo_def) constructor
         __success   = false;
         __direction = undefined;
         
-        __new_phase   = (__phase != 0);
+        __new_phase   = false;
         __phase       = 0;
         __start_time  = __input_get_time();
         
@@ -38,15 +38,20 @@ function __input_class_combo_state(_name, _combo_def) constructor
     
     static __evaluate = function(_player_verb_struct)
     {
-        static _all_verb_array = __global.__all_verb_array;
-        
-        __new_phase = false;
-        if (__success) __reset();
-        
+        static _all_verb_array = __global.__all_verb_array;      
         var _phase_array = __combo.__phase_array;
         var _combo_length = array_length(_phase_array);
         if (_combo_length <= 0) return false;
         
+		__phase += __new_phase;
+        __new_phase = false;
+        if (__phase >= _combo_length)
+        {
+            if (INPUT_COMBO_DEBUG) __input_trace("Combo \"", __name, "\" success");  
+            __success = true;
+        }
+        if (__success) __reset();
+
         var _phase_data = _phase_array[__phase];
         var _phase_type = _phase_data.__type;
         var _phase_verb = _phase_data.__verb;
@@ -153,17 +158,7 @@ function __input_class_combo_state(_name, _combo_def) constructor
             }
         }
         
-        if (__check_valid(_player_verb_struct))
-        {
-            if (__phase >= _combo_length)
-            {
-                if (INPUT_COMBO_DEBUG) __input_trace("Combo \"", __name, "\" success");
-                    
-                __success = true;
-                return true;
-            }
-        }
-        else
+        if (not __check_valid(_player_verb_struct))
         {
             __reset();
         }
@@ -197,7 +192,6 @@ function __input_class_combo_state(_name, _combo_def) constructor
             __charge_trigger = true;
         }
         
-        ++__phase;
         __new_phase = true;
         __start_time = __input_get_time();
     }
@@ -205,7 +199,9 @@ function __input_class_combo_state(_name, _combo_def) constructor
     static __check_valid = function(_player_verb_struct)
     {
         static _all_verb_array = __global.__all_verb_array;
-        var _ignore_dict = __combo.__ignore_dict;
+		var _phase_array	= __combo.__phase_array;
+		var _phase_verb		= _phase_array[__phase].__verb;
+        var _ignore_dict	= __combo.__ignore_dict;
         
         //Check everything that's meant to be pressed is being pressed
         var _i = 0;
@@ -235,9 +231,11 @@ function __input_class_combo_state(_name, _combo_def) constructor
                     //Once a verb has been released, don't allow it to be retriggered
                     if (not _state.held) variable_struct_remove(__allow_hold_dict, _verb);
                 }
-                else if (not variable_struct_exists(_ignore_dict, __direction_mapping[$ _verb] ?? _verb)) //Don't trigger a failure if this verb has been ignored
+                else if (not variable_struct_exists(_ignore_dict, __direction_mapping[$ _verb] ?? _verb) and //Don't trigger a failure if this verb has been ignored
+					((_player_verb_struct[$ _phase_verb].type == __INPUT_VERB_TYPE.__CHORD) and  // Don't trigger a failure if current phase is a chord, and verb is part of that chord
+					(not array_contains(__global.__chord_verb_dict[$ _phase_verb].__verb_array, _verb)))) 
                 {
-                    if (_state.held)
+					if (_state.held)
                     {
                         if (INPUT_COMBO_DEBUG && (__phase != 0)) __input_trace("Combo \"", __name, "\" failed, verb \"", _verb, "\" pressed erroneously (phase=", __phase, ")");
                         return false;
