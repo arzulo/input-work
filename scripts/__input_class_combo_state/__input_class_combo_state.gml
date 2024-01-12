@@ -43,7 +43,7 @@ function __input_class_combo_state(_name, _combo_def) constructor
         var _combo_length = array_length(_phase_array);
         if (_combo_length <= 0) return false;
         
-		__phase += __new_phase;
+        __phase += __new_phase;
         __new_phase = false;
         if (__phase >= _combo_length)
         {
@@ -198,10 +198,10 @@ function __input_class_combo_state(_name, _combo_def) constructor
     
     static __check_valid = function(_player_verb_struct)
     {
-        static _all_verb_array = __global.__all_verb_array;
-		var _phase_array	= __combo.__phase_array;
-		var _phase_verb		= _phase_array[__phase].__verb;
-        var _ignore_dict	= __combo.__ignore_dict;
+        static _all_verb_array  = __global.__all_verb_array;
+        var _phase_array	    = __combo.__phase_array;
+        var _phase_verb		    = _phase_array[__phase].__verb;
+        var _ignore_dict	    = __combo.__ignore_dict;
         
         //Check everything that's meant to be pressed is being pressed
         var _i = 0;
@@ -232,10 +232,10 @@ function __input_class_combo_state(_name, _combo_def) constructor
                     if (not _state.held) variable_struct_remove(__allow_hold_dict, _verb);
                 }
                 else if (not variable_struct_exists(_ignore_dict, __direction_mapping[$ _verb] ?? _verb) and //Don't trigger a failure if this verb has been ignored
-					((_player_verb_struct[$ _phase_verb].type == __INPUT_VERB_TYPE.__CHORD) and  // Don't trigger a failure if current phase is a chord, and verb is part of that chord
-					(not array_contains(__global.__chord_verb_dict[$ _phase_verb].__verb_array, _verb)))) 
+                    ((_player_verb_struct[$ _phase_verb].type == __INPUT_VERB_TYPE.__CHORD) and  // Don't trigger a failure if current phase is a chord, and verb is part of that chord
+                    (not array_contains(__global.__chord_verb_dict[$ _phase_verb].__verb_array, _verb)))) 
                 {
-					if (_state.held)
+                    if (_state.held)
                     {
                         if (INPUT_COMBO_DEBUG && (__phase != 0)) __input_trace("Combo \"", __name, "\" failed, verb \"", _verb, "\" pressed erroneously (phase=", __phase, ")");
                         return false;
